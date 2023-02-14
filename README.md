@@ -1,2 +1,2 @@
 # rusty-euler
-solving project euler problems in rust
+solving the first 100 project euler problems in rust
