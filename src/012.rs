@@ -24,6 +24,8 @@ What is the value of the first triangle number to have over five hundred divisor
 
 use std::time::Instant;
 
+use std::collections::HashMap;
+
 
 fn main() {
     let start = Instant::now();
@@ -35,30 +37,47 @@ fn main() {
 
     let mut max_divisors = 0;
 
+    let mut primes:Vec<u64> = vec![2];
+
     loop {
 
         x += n;
 
-        let mut divisors = 0;
-        for i in 1..x+1 {
-            if x % i == 0 {
-                divisors += 1;
+        let mut x_div = x;
+        let mut map: HashMap<u64, u64> = HashMap::new();
+
+        primes = get_primes(x, primes);
+
+        for p in &primes {
+            loop {
+                if x_div % p != 0 {
+                    break;
+                }
+                x_div = x_div / p;
+                if !map.contains_key(&p) {
+                    map.insert(*p, 0);
+                }
+                map.insert(*p, &map[&p]+1);
             }
+        }
+
+        let mut divisors = 1;
+        for count in map.values() {
+            divisors = divisors * (count+1);
         }
 
         if divisors >= max_divisors {
             max_divisors = divisors;
         }
 
-        if divisors >= 100 {
+        if divisors >= 500 {
             break;
         }
 
         n += 1;
-
-        if n % 100 == 0 {
-            println!("checked up to: {} numbers | max divisors: {}", n, max_divisors);
-        }
+        // if n % 100 == 0 {
+        //     println!("checked up to: {} numbers | max divisors: {}", n, max_divisors);
+        // }
     }
 
     println!("first triangle number with over 500 divisors: {}", x);
@@ -67,4 +86,27 @@ fn main() {
 
     let duration = start.elapsed();
     println!("Execution time: {:?}", duration);
+}
+
+
+fn get_primes(n:u64, mut primes:Vec<u64>) -> Vec<u64> {
+    if n < primes.last().unwrap_or(&2)+1 {
+        return primes;
+    }
+    let start_point = primes.last().unwrap_or(&2) + 1;
+    for i in start_point..(n as f64).sqrt() as u64 {
+        let mut is_prime = true;
+        for p in &primes {
+            if ((i as f64).sqrt() as u64) < *p {
+                break;
+            }
+            if (i as u64) % p == 0 {
+                is_prime = false;
+            }
+        }
+        if is_prime {
+            primes.push(i as u64);
+        }
+    }
+    return primes;
 }
