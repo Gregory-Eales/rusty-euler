@@ -20,6 +20,7 @@ NOTE: Once the chain starts the terms are allowed to go above one million.
 use std::time::Instant;
 use std::collections::HashMap;
 
+
 fn main() {
     let start = Instant::now();
 
@@ -30,10 +31,10 @@ fn main() {
     let mut greatest_length = 0;
     let mut greatest_value = 0;
 
-    let mut length = 0;
+    let mut length;
 
-    for i in (1..1_000_000) {
-        length = collatz_length(i as u64, table.clone());
+    for i in 1..1_000_000 {
+        length = collatz_length(i as u64, &table);
         table.insert(i as u64, length);
         if length > greatest_length {
             greatest_length = length;
@@ -49,13 +50,13 @@ fn main() {
     println!("Execution time: {:?}", duration);
 }
 
-fn collatz_length(mut n: u64, table: HashMap<u64, u64>) -> u64{
+fn collatz_length(mut n: u64, table: &HashMap<u64, u64>) -> u64{
 
     let mut count = 1;
     while n != 1 {
 
         if table.contains_key(&n) {
-            return table[&n] + count;
+            return &table[&n] + count;
         }
 
         if n % 2 == 0 {
@@ -70,5 +71,6 @@ fn collatz_length(mut n: u64, table: HashMap<u64, u64>) -> u64{
 
     return count;
 }
+
 
 
