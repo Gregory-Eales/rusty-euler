@@ -19,7 +19,6 @@ NOTE: Once the chain starts the terms are allowed to go above one million.
 
 use std::time::Instant;
 use std::collections::HashMap;
-use indicatif::ProgressIterator;
 
 fn main() {
     let start = Instant::now();
@@ -33,7 +32,7 @@ fn main() {
 
     let mut length = 0;
 
-    for i in (1..1_000_000).progress() {
+    for i in (1..1_000_000) {
         length = collatz_length(i as u64, table.clone());
         table.insert(i as u64, length);
         if length > greatest_length {
