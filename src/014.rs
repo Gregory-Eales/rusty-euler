@@ -27,10 +27,8 @@ fn main() {
     // -------------------------------
 
     let mut table : HashMap<u64, u64> = HashMap::new();
-
     let mut greatest_length = 0;
     let mut greatest_value = 0;
-
     let mut length;
 
     for i in 1..1_000_000 {
@@ -51,24 +49,19 @@ fn main() {
 }
 
 fn collatz_length(mut n: u64, table: &HashMap<u64, u64>) -> u64{
-
     let mut count = 1;
     while n != 1 {
-
         if table.contains_key(&n) {
             return &table[&n] + count;
         }
-
         if n % 2 == 0 {
             n = n / 2;
         }
-
         else {
             n = 3*n + 1;
         }
         count += 1;
     }
-
     return count;
 }
 

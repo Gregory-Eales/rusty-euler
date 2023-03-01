@@ -1,20 +1,11 @@
-// problem 14
+// problem 51
 // ------------------------------------------------------
 /*
-The following iterative sequence is defined for the set of positive integers:
+By replacing the 1st digit of the 2-digit number *3, it turns out that six of the nine possible values: 13, 23, 43, 53, 73, and 83, are all prime.
 
-n → n/2 (n is even)
-n → 3n + 1 (n is odd)
+By replacing the 3rd and 4th digits of 56**3 with the same digit, this 5-digit number is the first example having seven primes among the ten generated numbers, yielding the family: 56003, 56113, 56333, 56443, 56663, 56773, and 56993. Consequently 56003, being the first member of this family, is the smallest prime with this property.
 
-Using the rule above and starting with 13, we generate the following sequence:
-
-13 → 40 → 20 → 10 → 5 → 16 → 8 → 4 → 2 → 1
-It can be seen that this sequence (starting at 13 and finishing at 1) contains 10 terms.
-Although it has not been proved yet (Collatz Problem), it is thought that all starting numbers finish at 1.
-
-Which starting number, under one million, produces the longest chain?
-
-NOTE: Once the chain starts the terms are allowed to go above one million.
+Find the smallest prime which, by replacing part of the number (not necessarily adjacent digits) with the same digit, is part of an eight prime value family.
 */
 
 use std::time::Instant;
@@ -22,54 +13,43 @@ use std::collections::HashMap;
 use indicatif::ProgressIterator;
 
 fn main() {
+
     let start = Instant::now();
 
     // -------------------------------
 
-    let mut table : HashMap<u64, u64> = HashMap::new();
-
-    let mut greatest_length = 0;
-    let mut greatest_value = 0;
-
-    let mut length;
-
-    for i in (1..1_000_000).progress() {
-        length = collatz_length(i as u64, &table);
-        table.insert(i as u64, length);
-        if length > greatest_length {
-            greatest_length = length;
-            greatest_value = i as u64;
-        }
-    }
-
-    println!("collatz length of {} is {}", greatest_value, greatest_length);
+    let mut n = 10_000_000;
+    println!("\n\n");
+    println!("getting all primes up to {}:", n);
+    let mut primes = get_primes(n);
 
     // -------------------------------
 
     let duration = start.elapsed();
-    println!("Execution time: {:?}", duration);
+    println!("Execution time {:?}", duration);
 }
 
-fn collatz_length(mut n: u64, table: &HashMap<u64, u64>) -> u64{
+fn get_nth_digit(x:u64, n:usize) {
+    // get the nth digit of a number x
+    return x.to_string().chars().nth(n).unwrap();
+}
 
-    let mut count = 1;
-    while n != 1 {
 
-        if table.contains_key(&n) {
-            return &table[&n] + count;
+fn get_primes(n:u32) -> Vec<u64> {
+    let mut primes: Vec<u64> = vec![2];
+    for i in (3..n+1).progress()  {
+        let mut is_prime = true;
+        for p in &primes {
+            if ((i as f64).sqrt() as u64) < *p {
+                break;
+            }
+            if (i as u64) % p == 0 {
+                is_prime = false;
+            }
         }
-
-        if n % 2 == 0 {
-            n = n / 2;
+        if is_prime {
+            primes.push(i as u64);
         }
-
-        else {
-            n = 3*n + 1;
-        }
-        count += 1;
     }
-
-    return count;
+    return primes;
 }
-
-
